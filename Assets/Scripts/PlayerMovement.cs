@@ -34,9 +34,12 @@ public class PlayerMovement : MonoBehaviour
 
     public int direction;
     public int playerNo;
+    public int lane;
 
+    public bool switchable;
+    public string changeloc;
 
-   public float currentSpeed = 1.0f;
+    public float currentSpeed = 1.0f;
 
     Vector2 currentDirection;
     // Use this for initialization
@@ -105,22 +108,22 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.A))
             {
-                setDirection(stringDirection("left"));
+                changeLane(3);
             }
 
             if (Input.GetKeyDown(KeyCode.D))
             {
-                setDirection(stringDirection("right"));
+                changeLane(1);
             }
 
             if (Input.GetKeyDown(KeyCode.W))
             {
-                setDirection(stringDirection("up"));
+                changeLane(0);
             }
 
             if (Input.GetKeyDown(KeyCode.S))
             {
-                setDirection(stringDirection("down"));
+                changeLane(2);
             }
             if (Input.GetKeyDown(KeyCode.E))
             {
@@ -135,22 +138,22 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                setDirection(stringDirection("left"));
+                changeLane(3);
             }
 
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                setDirection(stringDirection("right"));
+                changeLane(1);
             }
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                setDirection(stringDirection("up"));
+                changeLane(0);
             }
 
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                setDirection(stringDirection("down"));
+                changeLane(2);
             }
             if (Input.GetKeyDown(KeyCode.RightShift))
             {
@@ -166,18 +169,31 @@ public class PlayerMovement : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D coll)
     {
-        if (coll.gameObject.tag == "corner")
+        if (coll.gameObject.tag == "AC" || coll.gameObject.tag == "C")
         {
-            setDirection(newDirection());
 
-            GameObject resetLocation =  coll.transform.FindChild("resetLoc").gameObject;
+            if ((playerNo == 0 && coll.gameObject.tag == "AC") || (playerNo == 1 && coll.gameObject.tag == "C"))
+            {
+                setDirection(newDirection());
+                GameObject resetLocation = coll.transform.FindChild("resetLoc").gameObject;
+                transform.position = resetLocation.transform.position;
+            }
 
+        }
 
-            transform.position = resetLocation.transform.position;
+        if (coll.gameObject.tag == "laneswitch")
+        {
+            changeloc = coll.gameObject.name;
+            switchable = true;
+        }
+    }
 
-
-
-            
+    void OnTriggerExit2D(Collider2D coll)
+    {
+        if (coll.gameObject.tag == "laneswitch")
+        {
+            changeloc = "";
+            switchable = false;
         }
     }
 
@@ -258,7 +274,86 @@ public class PlayerMovement : MonoBehaviour
         return 0;
     }
 
+    void changeLane(int dir)
+    {
+        if (changeloc == "RightSwitch")
+        {
+            if (dir == 1)
+            {
+                lane++;
+            }
+            else if (dir == 3)
+            {
+                lane--;
+            }
+        }
+        else if (changeloc == "LeftSwitch")
+        {
+            if (dir == 1)
+            {
+                lane--;
+            }
+            else if (dir == 3)
+            {
+                lane++;
+            }
+        }
+        else if (changeloc == "TopSwitch")
+        {
+            if (dir == 0)
+            {
+                lane++;
+            }
+            else if (dir == 2)
+            {
+                lane--;
+            }
+        }
+        else if (changeloc == "BottomSwitch")
+        {
+            if (dir == 0)
+            {
+                lane--;
+            }
+            else if (dir == 2)
+            {
+                lane++;
+            }
+        }
 
+
+
+
+
+
+
+        //If in a valid lane and is in a switch
+        if ((lane >= 1 && lane <= 4) && switchable)
+        {
+            //If going up or down (Right or Left switchable)
+            if ((direction == 0 || direction == 2))
+            {
+                GameObject goSwitch = GameObject.Find(changeloc).gameObject;
+                GameObject laneAlign = goSwitch.transform.FindChild("Lane" + lane.ToString()).gameObject;
+                transform.position = new Vector2(laneAlign.transform.position.x, transform.position.y);
+            }
+            //If going left or right (Top or Bottom switchable)
+            else if ((direction == 1 || direction == 3))
+            {
+                GameObject goSwitch = GameObject.Find(changeloc).gameObject;
+                GameObject laneAlign = goSwitch.transform.FindChild("Lane" + lane.ToString()).gameObject;
+                transform.position = new Vector2(transform.position.x, laneAlign.transform.position.y);
+            }
+        }
+
+        //INVALID LANE SWITCH KILL PLAYER
+        if (lane < 1 || lane > 4 || !switchable)
+        {
+            //EXPLODE PLAYER - INVALID LANE CHANGE
+        }
+
+
+    }
 
     void Speed(bool accelerate)
     {
