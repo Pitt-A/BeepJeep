@@ -32,6 +32,10 @@ public class PlayerMovement : MonoBehaviour
     bool facingDown;
     public LayerMask mask;
 
+    int direction;
+    public int playerNo;
+
+
    public float currentSpeed = 1.0f;
 
     Vector2 currentDirection;
@@ -42,7 +46,6 @@ public class PlayerMovement : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         box2d = GetComponent<BoxCollider2D>();
         playerSprite = GetComponent<SpriteRenderer>();
-
     }
 
     // Update is called once per frame
@@ -69,25 +72,7 @@ public class PlayerMovement : MonoBehaviour
             isGrounded = false;
         }
 
-        if (horizontalAxis >= 0.05f)
-        {
-            Direction(true, false, false, false);
-        }
-
-        if (horizontalAxis <= -0.05f)
-        {
-            Direction(false, true, false, false);
-        }
-
-        if (verticalAxis <= -0.05f)
-        {
-            Direction(false, false, true, false);
-        }
-
-        if (verticalAxis >= 0.05f)
-        {
-            Direction(false, false, false, true);
-        }
+       
 
 
 
@@ -117,23 +102,23 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.A))
-        {       
-            Direction(false, true, false, false);
+        {
+            setDirection(stringDirection("left"));
         }
 
         if (Input.GetKeyDown(KeyCode.D))
-        {         
-            Direction(true, false, false, false);
+        {
+            setDirection(stringDirection("right"));
         }
 
         if (Input.GetKeyDown(KeyCode.W))
         {
-            Direction(false, false, true, false);
+            setDirection(stringDirection("up"));
         }
 
         if (Input.GetKeyDown(KeyCode.S))
         {
-            Direction(false, false, false, true);
+            setDirection(stringDirection("down"));
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -146,38 +131,101 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-
-    void Direction(bool right, bool left, bool up, bool down)
+    void OnTriggerEnter2D(Collider2D coll)
     {
-        facingRight = right;
-        facingLeft = left;
-        facingUp = up;
-        facingDown = down;
+        if (coll.gameObject.tag == "corner")
+        {
+            setDirection(newDirection());
 
-        if(facingRight == true)
-        {
-            //Rotate to right (0 deg)
-            playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-        }
-        if (facingLeft == true)
-        {
-            //Rotate to left (180 deg)
-            playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 180.0f);
-        }
-        if (facingUp == true)
-        {
-            //Rotate to up (90 deg)
-            playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+            GameObject resetLocation =  coll.transform.FindChild("resetLoc").gameObject;
 
-        }
-        if (facingDown == true)
-        {
-            //Rotate to down (270 deg)
-            playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 270.0f);
-        }
-        
 
+            transform.position = resetLocation.transform.position;
+
+
+
+            
+        }
     }
+
+
+    void setDirection(int dir)
+    {
+        switch(dir)
+        {
+            default: //Default - Up
+            case 0: //0 - UP
+                direction = 0;
+                playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+                break;
+
+            case 1: //1 - RIGHT
+                direction = 1;
+                playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                break;
+
+            case 2: //2 - DOWN
+                direction = 2;
+                playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 270.0f);
+                break;
+
+            case 3: //3 - LEFT
+                direction = 3;
+                playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 180.0f);
+                break;
+        }
+    }
+
+    int newDirection()
+    {
+        int playerDir = 1;
+
+        if(playerNo == 0)
+        {
+            playerDir = -1;
+        }
+
+        int newDirection = direction + playerDir;
+
+        if(newDirection < 0)
+        {
+            newDirection = 3;
+        }
+
+        if (newDirection > 3)
+        {
+            newDirection = 0;
+        }
+
+        return newDirection;
+    }
+
+    int stringDirection(string direction)
+    {
+        if(direction == "up")
+        {
+            return 0;
+        }
+
+        if (direction == "right")
+        {
+            return 1;
+        }
+
+        if (direction == "down")
+        {
+            return 2;
+        }
+
+        if (direction == "left")
+        {
+            return 3;
+        }
+
+        return 0;
+    }
+
+
 
     void Speed(bool accelerate)
     {
