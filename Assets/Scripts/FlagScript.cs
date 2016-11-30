@@ -7,7 +7,8 @@ public class FlagScript : MonoBehaviour
     bool pickedUp = false;
     Vector3 tempPos;
     const float carryOffset = 0.4f;
-    int spawnCorner, posX, posY, player;
+    int spawnCorner, posX, posY;
+    public int player;
     Vector3 spawn1, spawn2, spawn3, spawn4;
 
     public AudioClip flagPickup;

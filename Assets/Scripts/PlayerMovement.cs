@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -19,7 +20,9 @@ public class PlayerMovement : MonoBehaviour
     float keySlow;
 
     public GameObject player;
+    public GameObject flag;
     public float playerSpeed;
+    public Text scoreText;
 
     Rigidbody2D rb2d;
     BoxCollider2D box2d;
@@ -41,6 +44,8 @@ public class PlayerMovement : MonoBehaviour
 
     public float currentSpeed = 1.0f;
 
+    public float score;
+
     Vector2 currentDirection;
     // Use this for initialization
     void Start()
@@ -49,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         box2d = GetComponent<BoxCollider2D>();
         playerSprite = GetComponent<SpriteRenderer>();
+        score = 0.0f;
     }
 
     // Update is called once per frame
@@ -75,7 +81,14 @@ public class PlayerMovement : MonoBehaviour
             isGrounded = false;
         }
 
-       
+
+        FlagScript flagScript = flag.GetComponent<FlagScript>();
+
+       if (flagScript.player - 1 == playerNo)
+        {
+            score += Time.deltaTime;
+            scoreText.text = "PLAYER " + (playerNo+1).ToString() + ": " +  Mathf.FloorToInt(score).ToString();
+        }
 
 
 
