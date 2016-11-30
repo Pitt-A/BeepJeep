@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
     bool facingDown;
     public LayerMask mask;
 
-    int direction;
+    public int direction;
     public int playerNo;
 
 
@@ -101,32 +101,65 @@ public class PlayerMovement : MonoBehaviour
 
         }
 
-        if (Input.GetKeyDown(KeyCode.A))
+        if (playerNo == 0)
         {
-            setDirection(stringDirection("left"));
-        }
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                setDirection(stringDirection("left"));
+            }
 
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            setDirection(stringDirection("right"));
-        }
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                setDirection(stringDirection("right"));
+            }
 
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            setDirection(stringDirection("up"));
-        }
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                setDirection(stringDirection("up"));
+            }
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            setDirection(stringDirection("down"));
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                setDirection(stringDirection("down"));
+            }
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                Speed(true);
+            }
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                Speed(false);
+            }
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        else if (playerNo == 1)
         {
-            Speed(true);
-        }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            Speed(false);
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                setDirection(stringDirection("left"));
+            }
+
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                setDirection(stringDirection("right"));
+            }
+
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                setDirection(stringDirection("up"));
+            }
+
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                setDirection(stringDirection("down"));
+            }
+            if (Input.GetKeyDown(KeyCode.RightShift))
+            {
+                Speed(true);
+            }
+            if (Input.GetKeyDown(KeyCode.RightControl))
+            {
+                Speed(false);
+            }
         }
     }
 
