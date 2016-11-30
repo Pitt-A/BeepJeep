@@ -38,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
     bool facingLeft;
     bool facingUp;
     bool facingDown;
+    bool isDead;
     public LayerMask mask;
 
     public int direction;
@@ -63,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
         playerSprite = GetComponent<SpriteRenderer>();
         score = 0.0f;
         audioComp = GetComponent<AudioSource>();
+        isDead = false;
     }
 
     // Update is called once per frame
@@ -98,19 +100,20 @@ public class PlayerMovement : MonoBehaviour
             scoreText.text = "PLAYER " + (playerNo+1).ToString() + ": " +  Mathf.FloorToInt(score).ToString();
         }
 
-        //Increase speed every 1 seconds
-        speedTimer += Time.deltaTime;
-        if (speedTimer >= 1.0f)
+       if (isDead == false)
         {
-            speedTimer = 0.0f;
-            currentSpeed++;
-            if (currentSpeed > 15)
+            //Increase speed every 1 seconds
+            speedTimer += Time.deltaTime;
+            if (speedTimer >= 1.0f)
             {
-                currentSpeed = 15;
+                speedTimer = 0.0f;
+                currentSpeed++;
+                if (currentSpeed > 15)
+                {
+                    currentSpeed = 15;
+                }
             }
         }
-
-
 
         if (buttonA >= 1.0f && rb2d.velocity.y == 0)
         {
@@ -234,10 +237,35 @@ public class PlayerMovement : MonoBehaviour
 
     void carExplode()
     {
+        isDead = true;
         audioComp.PlayOneShot(crash, 0.7f);
-        currentSpeed = 0;
-        Destroy(gameObject, crash.length);
+        currentSpeed = -0.3f;
+        StartCoroutine(RespawnAfterTime(1.5f));
+    }
 
+    IEnumerator RespawnAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        respawn();
+    }
+
+    void respawn()
+    {
+        if (playerNo == 0)
+        {
+            transform.position = new Vector3(0.113f, -4.311f, 0.0f);
+            currentSpeed = 1;
+            setDirection(1);
+            lane = 4;
+        }
+        else if (playerNo == 1)
+        {
+            transform.position = new Vector3(0.046f, -3.456f, 0.0f);
+            currentSpeed = 1;
+            setDirection(3);
+            lane = 3;
+        }
+        isDead = false;
     }
 
     void OnTriggerExit2D(Collider2D coll)
@@ -414,20 +442,20 @@ public class PlayerMovement : MonoBehaviour
         {
             carExplode();
         }
-
-
     }
 
     void Speed(bool accelerate)
     {
-        if(accelerate)
+        if (isDead == false)
         {
-            currentSpeed += 1;
-        }
-        else if(!accelerate)
-        {
-            currentSpeed -= 1;
+            if (accelerate)
+            {
+                currentSpeed += 1;
+            }
+            else if (!accelerate)
+            {
+                currentSpeed -= 1;
+            }
         }
     }
-    
 }
