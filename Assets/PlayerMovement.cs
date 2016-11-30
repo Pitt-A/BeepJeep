@@ -58,7 +58,7 @@ public class PlayerMovement : MonoBehaviour
         keyLeft = Input.GetAxis("LeftKey");
         keyRight = Input.GetAxis("RightKey");
 
-        transform.Translate(currentDirection * currentSpeed * Time.deltaTime);
+        transform.Translate(Vector2.right * currentSpeed * Time.deltaTime);
 
         if (Physics2D.Raycast(transform.position, -Vector2.up, 1.0f, mask))
         {
@@ -156,19 +156,24 @@ public class PlayerMovement : MonoBehaviour
 
         if(facingRight == true)
         {
-            currentDirection = Vector2.right;
+            //Rotate to right (0 deg)
+            playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
         }
         if (facingLeft == true)
         {
-            currentDirection = Vector2.left;
+            //Rotate to left (180 deg)
+            playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 180.0f);
         }
         if (facingUp == true)
         {
-            currentDirection = Vector2.up;
+            //Rotate to up (90 deg)
+            playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+
         }
         if (facingDown == true)
         {
-            currentDirection = Vector2.down;
+            //Rotate to down (270 deg)
+            playerSprite.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 270.0f);
         }
         
 
