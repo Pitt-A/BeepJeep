@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(AudioSource))]
 public class PlayerMovement : MonoBehaviour
 {
 
@@ -27,6 +28,10 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D rb2d;
     BoxCollider2D box2d;
     SpriteRenderer playerSprite;
+
+    public FlagScript flagS;
+    public AudioClip crash;
+    AudioSource audioComp;
 
     public bool isGrounded;
     bool facingRight;
@@ -55,6 +60,7 @@ public class PlayerMovement : MonoBehaviour
         box2d = GetComponent<BoxCollider2D>();
         playerSprite = GetComponent<SpriteRenderer>();
         score = 0.0f;
+        audioComp = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -198,6 +204,22 @@ public class PlayerMovement : MonoBehaviour
         {
             changeloc = coll.gameObject.name;
             switchable = true;
+        }
+
+        if (coll.gameObject.tag == "Player")
+        {
+            Debug.Log("crash");
+            if (!flagS.pickedUp)
+            {
+
+                audioComp.PlayOneShot(crash, 0.7f);
+
+                currentSpeed = 0;
+                Destroy(gameObject, crash.length);
+
+            }
+
+
         }
     }
 

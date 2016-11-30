@@ -4,7 +4,7 @@ using System.Collections;
 [RequireComponent(typeof(AudioSource))]
 public class FlagScript : MonoBehaviour
 {
-    bool pickedUp = false;
+    public bool pickedUp = false;
     Vector3 tempPos;
     const float carryOffset = 0.4f;
     int spawnCorner, posX, posY;
