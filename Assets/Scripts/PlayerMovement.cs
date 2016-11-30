@@ -51,6 +51,8 @@ public class PlayerMovement : MonoBehaviour
 
     public float score;
 
+    float speedTimer;
+
     Vector2 currentDirection;
     // Use this for initialization
     void Start()
@@ -96,7 +98,17 @@ public class PlayerMovement : MonoBehaviour
             scoreText.text = "PLAYER " + (playerNo+1).ToString() + ": " +  Mathf.FloorToInt(score).ToString();
         }
 
-
+        //Increase speed every 1 seconds
+        speedTimer += Time.deltaTime;
+        if (speedTimer >= 1.0f)
+        {
+            speedTimer = 0.0f;
+            currentSpeed++;
+            if (currentSpeed > 15)
+            {
+                currentSpeed = 15;
+            }
+        }
 
 
 
@@ -211,16 +223,21 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("crash");
             if (!flagS.pickedUp)
             {
+                carExplode();
 
-                audioComp.PlayOneShot(crash, 0.7f);
-
-                currentSpeed = 0;
-                Destroy(gameObject, crash.length);
 
             }
 
 
         }
+    }
+
+    void carExplode()
+    {
+        audioComp.PlayOneShot(crash, 0.7f);
+        currentSpeed = 0;
+        Destroy(gameObject, crash.length);
+
     }
 
     void OnTriggerExit2D(Collider2D coll)
@@ -365,6 +382,17 @@ public class PlayerMovement : MonoBehaviour
         //If in a valid lane and is in a switch
         if ((lane >= 1 && lane <= 4) && switchable)
         {
+            //Lower speed
+            if (currentSpeed > 6.0f)
+            {
+                currentSpeed -= 5.0f;
+            }
+            else if (currentSpeed > 1.0f && currentSpeed <= 6.0f)
+            {
+                currentSpeed -= 1.0f;
+            }
+
+
             //If going up or down (Right or Left switchable)
             if ((direction == 0 || direction == 2))
             {
@@ -384,7 +412,7 @@ public class PlayerMovement : MonoBehaviour
         //INVALID LANE SWITCH KILL PLAYER
         if (lane < 1 || lane > 4 || !switchable)
         {
-            //EXPLODE PLAYER - INVALID LANE CHANGE
+            carExplode();
         }
 
 
